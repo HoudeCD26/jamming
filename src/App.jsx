@@ -4,6 +4,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
 import Tracklist from './Components/Tracklist'
+import Playlist from './Components/Playlist'
 
 function App() {
   const trackList = [
@@ -27,6 +28,13 @@ function App() {
     }
   ]
 
+/*
+*
+*
+* 
+*/
+// playlist state variable to hold the array of track selected byt the user 
+
   const [playlist,setPlaylist] = useState([]);
   
   function getTrackById(id) {
@@ -39,12 +47,39 @@ function handleAddToPlaylist(id){
 
  if (!track) return;
 
-  setPlaylist(prev => [...prev, track]);
+      setPlaylist(prev => {
+        if (prev.some(item => item.id === id)) {
+            return prev;
+        }
+
+        return [...prev, track];
+    });
 };
 
 
+function handleRemoveFromPlaylist(id){
+ setPlaylist(prev => (
+        prev.filter(track => track.id !== id)
+    ));
+};
 
-  const [count, setCount] = useState(0)
+
+/*
+*
+*
+* 
+*/
+// title state variable to hold the custom title enter by the user 
+
+   const [customTitle,setCustomTitle] = useState('');
+
+   function handleChangeTitle(e){
+    const {value} = e.target;
+    setCustomTitle(value);
+   }
+
+   
+
 
   return (
     <>
@@ -71,64 +106,11 @@ function handleAddToPlaylist(id){
 
       <section id="next-steps">
         <div id="docs">
-          <Tracklist trackList={trackList} handleAddToPlaylist={handleAddToPlaylist} />
+          <Tracklist trackList={trackList}  handleClickButton={handleAddToPlaylist} add={true} />
         </div>
         <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
+          <input value={customTitle} onChange={handleChangeTitle} placeholder='Enter your playlist Title'/>
+          <Tracklist trackList={playlist} handleClickButton={handleRemoveFromPlaylist} add={false} />
         </div>
       </section>
 

@@ -1,6 +1,6 @@
 
 
-function Track({trackInfo,onAddToPlaylist}){
+function Track({trackInfo,handleTrackClick,add}){
 const trackStyle={
     display:"flex",
     justifyContent:"space-between",
@@ -26,7 +26,7 @@ const buttonStyle={
                 <p>{trackInfo.album}</p>
             </div>
         </div>
-        <button className="add-button" type="button" onClick={()=>onAddToPlaylist(trackInfo.id)}>+</button>
+        <button className="add-button" type="button" onClick={()=>handleTrackClick(trackInfo.id)}>{add?"+":"-"}</button>
         </div>
         </>
     )
