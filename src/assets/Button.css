@@ -1,0 +1,15 @@
+
+.add-button {
+    height: 1.2rem;
+    margin: auto 0;
+    border: 1px solid #e5e4e7;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.add-button:hover {
+    background-color: #e5e4e7;
+    border-color: #ccc;
+    box-shadow: var(--shadow);
+}

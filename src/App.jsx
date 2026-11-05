@@ -3,8 +3,47 @@ import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
+import Tracklist from './Components/Tracklist'
 
 function App() {
+  const trackList = [
+    {
+      song:"Tenessee Whiskey",
+      author: "chris stappleton",
+      album: "Traveller",
+      id:1
+    },
+    {
+      song:"Livin'The Dream",
+      author: "Morgan Wallen",
+      album: "Dangerous",
+      id:2
+    },
+    {
+      song:"Kick Myself",
+      author: "Morgan Wallen",
+      album: "Im the problem" ,
+      id:3
+    }
+  ]
+
+  const [playlist,setPlaylist] = useState([]);
+  
+  function getTrackById(id) {
+    return trackList.find(track => track.id === id);
+};
+
+function handleAddToPlaylist(id){
+
+  const track = getTrackById(id);
+
+ if (!track) return;
+
+  setPlaylist(prev => [...prev, track]);
+};
+
+
+
   const [count, setCount] = useState(0)
 
   return (
@@ -16,43 +55,23 @@ function App() {
           <img src={viteLogo} className="vite" alt="Vite logo" />
         </div>
         <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
+          <h1>Jammming</h1>
+        <input placeholder='Enter Song to search for'/>
         </div>
         <button
           type="button"
           className="counter"
-          onClick={() => setCount((count) => count + 1)}
+        
         >
-          Count is {count}
+        SEARCH
         </button>
       </section>
 
-      <div className="ticks"></div>
+   
 
       <section id="next-steps">
         <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+          <Tracklist trackList={trackList} handleAddToPlaylist={handleAddToPlaylist} />
         </div>
         <div id="social">
           <svg className="icon" role="presentation" aria-hidden="true">
