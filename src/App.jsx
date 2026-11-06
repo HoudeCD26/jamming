@@ -4,47 +4,22 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
 import Tracklist from './Components/Tracklist'
-import Playlist from './Components/Playlist'
-
 import SpotifyLogin from './Components/SpotifyLogin';
 import { getSpotifyToken } from './authorization/spotify';
 
 
 function App() {
   
+const [trackList,setTrackList] = useState([]);
 
 
-
-  const trackList = [
-    {
-      song:"Tenessee Whiskey",
-      author: "chris stappleton",
-      album: "Traveller",
-      id:1,
-      uri:"uri1"
-    },
-    {
-      song:"Livin'The Dream",
-      author: "Morgan Wallen",
-      album: "Dangerous",
-      id:2,
-      uri:"uri2"
-    },
-    {
-      song:"Kick Myself",
-      author: "Morgan Wallen",
-      album: "Im the problem" ,
-      id:3,
-      uri:"uri3"
-    }
-  ]
 
 /*
 *
-*
+* playlist state variable to hold the array of track selected byt the user
 * 
 */
-// playlist state variable to hold the array of track selected byt the user 
+ 
 
   const [playlist,setPlaylist] = useState([]);
  
@@ -77,10 +52,10 @@ function handleRemoveFromPlaylist(id){
 
 /*
 *
-*
+* title state variable to hold the custom title enter by the user 
 * 
 */
-// title state variable to hold the custom title enter by the user 
+
 
    const [customTitle,setCustomTitle] = useState('');
 
@@ -92,33 +67,83 @@ function handleRemoveFromPlaylist(id){
 
 /*
 *
-*
+* uri state variable to hold the array of uri track to submit to spotify
 * 
 */
-//uri state variable to hold the array of uri track to submit to spotify
+
 
    const [uriPlaylist,setUriPlaylist] = useState([]);
 
    function handleUriPlaylist(){
 
     setUriPlaylist(()=>(
-      playlist.map(track=>(track.uri))
+      playlist.map(track=>(track.spotifyUrl))
     ))
    }
+
+/*
+*
+* Search state variable. will track and hold the value enter by the user to search
+* 
+*/
+
+const [search,setSearch]=useState('');
+const apiBaseUrl = "https://api.spotify.com/v1"
+
+function handleSearchChange(e){
+  const {value} = e.target;
+
+  setSearch(value);
+}
+function generateId() {
+  return crypto.randomUUID();
+}
+
+async function searchSong(){
+  try{
+
+    const tokenData = await getSpotifyToken();
+    const response = await fetch(
+       `${apiBaseUrl}/search?q=${encodeURIComponent(search)}&type=track`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokenData.access_token}`,
+            },
+          }
+    );
+
+   const songList = await response.json();
+const songs = songList.tracks.items;
+
+const formattedSongs = songs.map((song, index) => ({
+  id: generateId(),
+  name: song.name,
+  artist: song.artists.map((artist) => artist.name).join(", "),
+  album: song.album.name,
+  spotifyUrl: song.external_urls.spotify,
+}));
+
+setTrackList([ ...formattedSongs]);
+
+  }catch(err){
+    console.log("Error get api search song",err);
+  }
+}
+
+/*
+*
+* Fonction pour authentiquer l'utilisateur a sont compte spotify
+* 
+*/
 
   const [profile, setProfile] = useState(null);
 
    useEffect(() => {
-    console.log('🔥 React useEffect executed');
-    console.log('Current path:', window.location.pathname);
-
+   
     async function authenticate() {
       try {
-        console.log('🔥 Starting Spotify authentication');
-
+        
         const tokenData = await getSpotifyToken();
-
-        console.log('🔥 Token received:', !!tokenData.access_token);
 
         const response = await fetch(
           'https://api.spotify.com/v1/me',
@@ -143,7 +168,7 @@ function handleRemoveFromPlaylist(id){
   }, []);
 
   
-
+//return jsx statement
 
   return (
     <>
@@ -175,12 +200,12 @@ function handleRemoveFromPlaylist(id){
         </div>
         <div>
           <h1>Jammming</h1>
-        <input placeholder='Enter Song to search for'/>
+        <input value={search} onChange={handleSearchChange} placeholder='Enter Song to search for'/>
         </div>
         <button
           type="button"
           className="counter"
-        
+        onClick={()=>searchSong()}
         >
         SEARCH
         </button>

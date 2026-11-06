@@ -20,9 +20,9 @@ const buttonStyle={
         <>
         <div  style={trackStyle}>
         <div>
-            <h2>{trackInfo.song}</h2>
+            <h2>{trackInfo.name}</h2>
             <div>
-                <p>{trackInfo.author}</p>
+                <p>{trackInfo.artist}</p>
                 <p>{trackInfo.album}</p>
             </div>
         </div>
