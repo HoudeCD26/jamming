@@ -12,19 +12,22 @@ function App() {
       song:"Tenessee Whiskey",
       author: "chris stappleton",
       album: "Traveller",
-      id:1
+      id:1,
+      uri:"uri1"
     },
     {
       song:"Livin'The Dream",
       author: "Morgan Wallen",
       album: "Dangerous",
-      id:2
+      id:2,
+      uri:"uri2"
     },
     {
       song:"Kick Myself",
       author: "Morgan Wallen",
       album: "Im the problem" ,
-      id:3
+      id:3,
+      uri:"uri3"
     }
   ]
 
@@ -36,7 +39,7 @@ function App() {
 // playlist state variable to hold the array of track selected byt the user 
 
   const [playlist,setPlaylist] = useState([]);
-  
+ 
   function getTrackById(id) {
     return trackList.find(track => track.id === id);
 };
@@ -78,7 +81,22 @@ function handleRemoveFromPlaylist(id){
     setCustomTitle(value);
    }
 
-   
+
+/*
+*
+*
+* 
+*/
+//uri state variable to hold the array of uri track to submit to spotify
+
+   const [uriPlaylist,setUriPlaylist] = useState([]);
+
+   function handleUriPlaylist(){
+
+    setUriPlaylist(()=>(
+      playlist.map(track=>(track.uri))
+    ))
+   }
 
 
   return (
@@ -110,7 +128,9 @@ function handleRemoveFromPlaylist(id){
         </div>
         <div id="social">
           <input value={customTitle} onChange={handleChangeTitle} placeholder='Enter your playlist Title'/>
+          
           <Tracklist trackList={playlist} handleClickButton={handleRemoveFromPlaylist} add={false} />
+          <button onClick={handleUriPlaylist}>add</button>
         </div>
       </section>
 
