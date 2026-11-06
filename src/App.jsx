@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
@@ -6,7 +6,15 @@ import './App.css'
 import Tracklist from './Components/Tracklist'
 import Playlist from './Components/Playlist'
 
+import SpotifyLogin from './Components/SpotifyLogin';
+import { getSpotifyToken } from './authorization/spotify';
+
+
 function App() {
+  
+
+
+
   const trackList = [
     {
       song:"Tenessee Whiskey",
@@ -98,10 +106,68 @@ function handleRemoveFromPlaylist(id){
     ))
    }
 
+  const [profile, setProfile] = useState(null);
+
+   useEffect(() => {
+    console.log('🔥 React useEffect executed');
+    console.log('Current path:', window.location.pathname);
+
+    async function authenticate() {
+      try {
+        console.log('🔥 Starting Spotify authentication');
+
+        const tokenData = await getSpotifyToken();
+
+        console.log('🔥 Token received:', !!tokenData.access_token);
+
+        const response = await fetch(
+          'https://api.spotify.com/v1/me',
+          {
+            headers: {
+              Authorization: `Bearer ${tokenData.access_token}`,
+            },
+          }
+        );
+
+        const user = await response.json();
+
+        setProfile(user);
+      } catch (error) {
+        console.error('Spotify authentication failed:', error);
+      }
+    }
+
+    if (window.location.pathname === '/callback') {
+      authenticate();
+    }
+  }, []);
+
+  
+
 
   return (
     <>
       <section id="center">
+            <div>
+      <h1>My Spotify App</h1>
+
+      {!profile ? (
+        <SpotifyLogin />
+      ) : (
+        <div>
+          <h2>Welcome {profile.display_name}!</h2>
+          <p>Email: {profile.email}</p>
+          <p>Spotify ID: {profile.id}</p>
+          {profile.images?.[0] && (
+            <img
+              src={profile.images[0].url}
+              alt="Spotify profile"
+              width="120"
+            />
+          )}
+        </div>
+      )}
+    </div>
         <div className="hero">
           <img src={heroImg} className="base" width="170" height="179" alt="" />
           <img src={reactLogo} className="framework" alt="React logo" />
@@ -138,6 +204,8 @@ function handleRemoveFromPlaylist(id){
       <section id="spacer"></section>
     </>
   )
+
 }
+
 
 export default App
