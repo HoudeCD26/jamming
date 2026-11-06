@@ -1,17 +1,19 @@
-import { useState,useEffect } from 'react'
+import { useState,useEffect, useCallback } from 'react'
 import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
 import Tracklist from './Components/Tracklist'
 import SpotifyLogin from './Components/SpotifyLogin';
+import SearchBar from './Components/SearchBar'
 import { getSpotifyToken } from './authorization/spotify';
+import Spotify from './authorization/spotify'
 
 
 function App() {
   
 const [trackList,setTrackList] = useState([]);
-
+const [playlist,setPlaylist] = useState([]);
 
 
 /*
@@ -21,7 +23,7 @@ const [trackList,setTrackList] = useState([]);
 */
  
 
-  const [playlist,setPlaylist] = useState([]);
+  
  
   function getTrackById(id) {
     return trackList.find(track => track.id === id);
@@ -99,12 +101,14 @@ function generateId() {
   return crypto.randomUUID();
 }
 
-async function searchSong(){
+
+
+async function searchSong(songName){
   try{
 
     const tokenData = await getSpotifyToken();
     const response = await fetch(
-       `${apiBaseUrl}/search?q=${encodeURIComponent(search)}&type=track`,
+       `${apiBaseUrl}/search?q=${encodeURIComponent(songName)}&type=track`,
           {
             headers: {
               Authorization: `Bearer ${tokenData.access_token}`,
@@ -129,7 +133,6 @@ setTrackList([ ...formattedSongs]);
     console.log("Error get api search song",err);
   }
 }
-
 /*
 *
 * Fonction pour authentiquer l'utilisateur a sont compte spotify
@@ -174,7 +177,7 @@ setTrackList([ ...formattedSongs]);
     <>
       <section id="center">
             <div>
-      <h1>My Spotify App</h1>
+      <h1>My Spotify App 2.0</h1>
 
       {!profile ? (
         <SpotifyLogin />
@@ -193,22 +196,8 @@ setTrackList([ ...formattedSongs]);
         </div>
       )}
     </div>
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Jammming</h1>
-        <input value={search} onChange={handleSearchChange} placeholder='Enter Song to search for'/>
-        </div>
-        <button
-          type="button"
-          className="counter"
-        onClick={()=>searchSong()}
-        >
-        SEARCH
-        </button>
+       
+        <SearchBar onSearch={searchSong} />
       </section>
 
    
